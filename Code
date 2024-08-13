@@ -1,0 +1,85 @@
+#include <Servo.h>
+#define base_gear A0
+const int I_B_1 = 8; 
+const int D_B_1 = 7;
+const int I_B_2 = 9; 
+const int D_B_2 = 10; 
+const int grip_close = 11;
+const int grip_open = 12;
+float angle1 = 90;
+float angle2 = 90;
+float angle_3 = 90; 
+float grip_angle = 0;        
+float rot = 0.008;          
+Servo sv1;
+Servo sv2;
+Servo sv3;
+Servo gripper;
+
+void Gear_1(){
+  if (digitalRead(I_B_1) == LOW) {
+    angle1 += rot;
+    sv1.write(angle1);
+    } else if (digitalRead(D_B_1) == LOW) {
+    angle1 -= rot;
+    sv1.write(angle1);
+    }
+}
+
+
+void Gear_2(){
+  if (digitalRead(I_B_2) == LOW) {
+    angle2 += rot;
+    sv2.write(angle2);
+    } else if (digitalRead(D_B_2) == LOW) {
+    angle2 -= rot;
+    sv2.write(angle2);
+    }
+}
+
+
+
+void Gear_3(){
+  int analogValue = analogRead(base_gear);  
+  int angle_3 = map(analogValue, 0, 1023, 0, 180);  
+  sv3.write(angle_3);
+}
+
+
+
+
+
+
+void Grip(){
+  if (digitalRead(grip_close) == LOW){
+    grip_angle =+ 180;
+    gripper.write(grip_angle);
+  } else if (digitalRead(grip_open) == LOW){
+    grip_angle =- 180;
+    gripper.write(grip_angle);
+  }
+}
+
+
+
+void setup() {
+    sv1.attach(6);
+    sv2.attach(5);
+    sv3.attach(4);
+    gripper.attach(3);
+    pinMode(I_B_1, INPUT_PULLUP);
+    pinMode(D_B_1, INPUT_PULLUP);
+    pinMode(I_B_2, INPUT_PULLUP);
+    pinMode(D_B_2, INPUT_PULLUP);
+    pinMode(grip_close, INPUT_PULLUP);
+    pinMode(grip_open, INPUT_PULLUP);
+}
+
+
+
+void loop() {
+  Gear_1();
+  Gear_2();
+  Gear_3();
+  Grip();
+}
